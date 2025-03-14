@@ -1,0 +1,3 @@
+cups_admin_group: lpadmin
+cups_admin_users:
+  - "{{ ansible_env.SUDO_USER }}"

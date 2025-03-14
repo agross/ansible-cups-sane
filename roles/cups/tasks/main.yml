@@ -1,0 +1,34 @@
+- name: Ensure cups and avahi-daemon is installed
+  ansible.builtin.package:
+    name:
+      - cups-daemon
+      - avahi-daemon
+    state: present
+
+- name: Template config files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/cups/{{ item | ansible.builtin.splitext | first }}"
+    owner: 0
+    group: 0
+    mode: "644"
+  loop:
+    - cups-files.conf.j2
+    - cupsd.conf.j2
+  notify: Restart cups
+
+- name: Support HP printers
+  ansible.builtin.import_tasks:
+    file: hp.yml
+
+- name: Ensure lpadmin group exists
+  ansible.builtin.group:
+    name: "{{ cups_admin_group }}"
+    state: present
+
+- name: Add users to lpadmin group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    append: true
+    groups: "{{ cups_admin_group }}"
+  loop: "{{ cups_admin_users | default([]) }}"

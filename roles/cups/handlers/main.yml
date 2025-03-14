@@ -1,0 +1,4 @@
+- name: Restart cups
+  ansible.builtin.systemd_service:
+    name: cups
+    state: restarted
