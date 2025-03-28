@@ -1,8 +1,9 @@
 - name: Ensure cups and avahi-daemon is installed
-  ansible.builtin.package:
+  ansible.builtin.apt:
     name:
       - cups-daemon
       - avahi-daemon
+    update_cache: true
     state: present
 
 - name: Template config files
