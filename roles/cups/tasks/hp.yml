@@ -3,6 +3,7 @@
     name:
       - hplip
       - expect
+      - gpg
     state: present
 
 - name: Copy install script
