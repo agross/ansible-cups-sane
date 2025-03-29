@@ -18,6 +18,13 @@
     - cupsd.conf.j2
   notify: Restart cups
 
+- name: Validate config files
+  ansible.builtin.command:
+    argv:
+      - cupsd
+      - -t
+  changed_when: false
+
 - name: Support HP printers
   ansible.builtin.import_tasks:
     file: hp.yml
