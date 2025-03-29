@@ -1,0 +1,22 @@
+- name: Ensure curl is installed
+  ansible.builtin.package:
+    name: curl
+    state: present
+
+- name: Download installer script
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/sbs20/scanservjs/master/bootstrap.sh
+    dest: /tmp/scanservjs.sh
+    owner: 0
+    group: 0
+    mode: "744"
+
+- name: Run installer script
+  ansible.builtin.command:
+    argv:
+      - /tmp/scanservjs.sh
+      - -v
+      - latest
+  register: scanservjs_install
+  changed_when: >-
+    'scanservjs is already the newest version' not in scanservjs_install.stdout

@@ -1,0 +1,7 @@
+- name: Import airsaned tasks
+  ansible.builtin.import_tasks:
+    file: airsaned.yml
+
+- name: Import scanservjs tasks
+  ansible.builtin.import_tasks:
+    file: scanservjs.yml

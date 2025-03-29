@@ -1,4 +1,10 @@
-- name: Restart cups
+- name: Restart cups service
   ansible.builtin.systemd_service:
     name: cups
+    state: restarted
+
+- name: Restart airsaned service
+  when: airsaned_started is not changed
+  ansible.builtin.systemd_service:
+    name: airsaned
     state: restarted

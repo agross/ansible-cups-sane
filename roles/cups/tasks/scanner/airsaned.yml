@@ -1,0 +1,51 @@
+- name: Ensure git and SANE dependencies are installed
+  ansible.builtin.package:
+    name:
+      - git
+      - avahi-daemon
+      - sane-utils
+      - libsane-dev
+      - libjpeg-dev
+      - libpng-dev
+      - libavahi-client-dev
+      - libusb-1.*-dev
+      - cmake
+      - g++
+    state: present
+
+- name: Clone AirSane
+  ansible.builtin.git:
+    repo: https://github.com/SimulPiscator/AirSane.git
+    clone: true
+    dest: /tmp/airsane
+
+- name: Create directory for building
+  ansible.builtin.file:
+    path: /tmp/airsane-build
+    state: directory
+    owner: 0
+    group: 0
+    mode: "755"
+
+- name: Build AirSane
+  ansible.builtin.command:
+    argv: "{{ item }}"
+    chdir: /tmp/airsane-build
+  loop:
+    - ['cmake', '../airsane']
+    - ['make']
+    - ['make', 'install']
+  changed_when: true
+
+- name: Set device location
+  ansible.builtin.lineinfile:
+    path: /etc/airsane/options.conf
+    regexp: ^#location\b
+    line: location Wohnzimmer
+  notify: Restart airsaned service
+
+- name: Start service
+  ansible.builtin.systemd_service:
+    name: airsaned.service
+    state: started
+  register: airsaned_started
