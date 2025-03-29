@@ -33,3 +33,40 @@
     append: true
     groups: "{{ cups_admin_group }}"
   loop: "{{ cups_admin_users | default([]) }}"
+
+- name: Install printers
+  cups_lpadmin:
+    name: "{{ item.key }}"
+    printer_or_class: printer
+    state: "{{ item.value.state | default('present') }}"
+    info: "{{ item.value.info | default(omit) }}"
+    location: "{{ item.value.location | default(omit) }}"
+    uri: "{{ item.value.uri }}"
+    model: "{{ item.value.model | default(omit) }}"
+    enabled: "{{ item.value.enabled | default(true) }}"
+    default: "{{ item.value.default_printer | default(omit) }}"
+    report_ipp_supply_levels: >-
+      {{
+        item.value.report_ipp_supply_levels |
+        default(true)
+      }}
+    report_snmp_supply_levels: >-
+      {{
+        item.value.report_snmp_supply_levels |
+        default(true)
+      }}
+    shared: "{{ item.value.shared | default(true) }}"
+    assign_cups_policy: >-
+      {{
+        item.value.assign_cups_policy |
+        default('default')
+      }}
+    job_kb_limit: "{{ item.value.job_kb_limit | default(omit) }}"
+    job_quota_limit: "{{ item.value.job_quota_limit | default(omit) }}"
+    job_page_limit: "{{ item.value.job_page_limit | default(omit) }}"
+    options: "{{ item.value.options | default(omit) }}"
+  loop: >-
+    {{
+      cups_printers |
+      ansible.builtin.dict2items
+    }}

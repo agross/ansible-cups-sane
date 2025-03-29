@@ -1,0 +1,16 @@
+cups_printers:
+  HP_Photosmart_C4480:
+    info: HP Photosmart C4480
+    location: Wohnzimmer
+    uri: hp:/usb/Photosmart_C4400_series?serial=TH95EH51TG05BN
+    # lpinfo -m
+    model: drv:///hpcups.drv/hp-photosmart_c4400_series.ppd
+    default_printer: true
+    # lpoptions -p HP_Photosmart_C4480, the strings before the slash.
+    options:
+      PageSize: A4
+      Duplex: None
+      ColorModel: RGB
+      MediaType: Plain
+      OutputMode: Normal
+      OptionDuplex: "False"
