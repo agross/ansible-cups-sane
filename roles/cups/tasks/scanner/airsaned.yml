@@ -41,7 +41,7 @@
   ansible.builtin.lineinfile:
     path: /etc/airsane/options.conf
     regexp: ^#location\b
-    line: location Wohnzimmer
+    line: "location {{ scanner_location }}"
   notify: Restart airsaned service
 
 - name: Start service

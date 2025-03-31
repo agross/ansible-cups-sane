@@ -14,3 +14,5 @@ cups_printers:
       MediaType: Plain
       OutputMode: Normal
       OptionDuplex: "False"
+
+scanner_location: "{{ cups_printers.HP_Photosmart_C4480.location }}"
