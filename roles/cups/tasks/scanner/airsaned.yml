@@ -47,5 +47,6 @@
 - name: Start service
   ansible.builtin.systemd_service:
     name: airsaned.service
+    enabled: true
     state: started
   register: airsaned_started
