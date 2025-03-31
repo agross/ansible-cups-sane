@@ -20,3 +20,9 @@
   register: scanservjs_install
   changed_when: >-
     'scanservjs is already the newest version' not in scanservjs_install.stdout
+
+# Test with: sudo -u scanservjs scanimage -L
+- name: Ensure remote scanners and the scanner we announce are not listed
+  ansible.builtin.file:
+    path: /etc/sane.d/dll.d/airscan
+    state: absent
