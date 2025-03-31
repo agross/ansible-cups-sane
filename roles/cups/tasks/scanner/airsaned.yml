@@ -47,14 +47,14 @@
     - ['make', 'install']
   changed_when: true
 
-- name: Set device location
+- name: Set scanner location
   ansible.builtin.lineinfile:
     path: /etc/airsane/options.conf
     regexp: ^#location\b
     line: "location {{ scanner_location }}"
   notify: Restart airsaned service
 
-- name: Start service
+- name: Start airsaned service
   ansible.builtin.systemd_service:
     name: airsaned.service
     enabled: true
