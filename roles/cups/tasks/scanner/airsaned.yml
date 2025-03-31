@@ -13,6 +13,16 @@
       - g++
     state: present
 
+# Test with: sudo -u saned scanimage -L
+- name: Work around scanner not being accessible
+  ansible.builtin.copy:
+    content: |
+      ENV{libsane_matched}=="yes", RUN+="/usr/bin/setfacl -m g:scanner:rw $env{DEVNAME}"
+    dest: /etc/udev/rules.d/65-libsane.rules
+    owner: 0
+    group: 0
+    mode: "644"
+
 - name: Clone AirSane
   ansible.builtin.git:
     repo: https://github.com/SimulPiscator/AirSane.git
