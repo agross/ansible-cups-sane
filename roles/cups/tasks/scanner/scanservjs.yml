@@ -26,3 +26,12 @@
   ansible.builtin.file:
     path: /etc/sane.d/dll.d/airscan
     state: absent
+
+- name: Template local config
+  ansible.builtin.template:
+    src: "{{ ansible_role_name }}/config.local.js.j2"
+    dest: /etc/scanservjs/config.local.js
+    owner: 0
+    group: 0
+    mode: "644"
+  notify: Restart scanservjs service

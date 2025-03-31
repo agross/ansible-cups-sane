@@ -16,3 +16,6 @@ cups_printers:
       OptionDuplex: "False"
 
 scanner_location: "{{ cups_printers.HP_Photosmart_C4480.location }}"
+scanner_name: "{{ cups_printers.HP_Photosmart_C4480.info }}"
+scanner_device_prefix: hpaio:/
+scanner_ocr_language: deu
