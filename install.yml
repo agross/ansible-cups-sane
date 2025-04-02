@@ -1,5 +1,8 @@
-- name: Install print server
+- name: Install printer and scanner server
   hosts: all
   become: true
   roles:
     - role: cups
+      tags: cups
+    - role: sane
+      tags: sane

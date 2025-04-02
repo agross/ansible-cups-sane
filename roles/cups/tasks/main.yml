@@ -1,7 +1,79 @@
-- name: Import printer tasks
-  ansible.builtin.import_tasks:
-    file: printer/main.yml
+- name: Ensure cups and avahi-daemon is installed
+  ansible.builtin.apt:
+    name:
+      - cups-daemon
+      - avahi-daemon
+    update_cache: true
+    state: present
 
-- name: Import scanner tasks
+- name: Template config files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/cups/{{ item | ansible.builtin.splitext | first }}"
+    owner: 0
+    group: 0
+    mode: "644"
+  loop:
+    - cups-files.conf.j2
+    - cupsd.conf.j2
+  notify: Restart cups service
+
+- name: Validate config files
+  ansible.builtin.command:
+    argv:
+      - cupsd
+      - -t
+  changed_when: false
+
+- name: Support HP printers
   ansible.builtin.import_tasks:
-    file: scanner/main.yml
+    file: hp.yml
+
+- name: Ensure lpadmin group exists
+  ansible.builtin.group:
+    name: "{{ cups_admin_group }}"
+    state: present
+
+- name: Add users to lpadmin group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    append: true
+    groups: "{{ cups_admin_group }}"
+  loop: "{{ cups_admin_users | default([]) }}"
+
+- name: Install printers
+  cups_lpadmin:
+    name: "{{ item.key }}"
+    printer_or_class: printer
+    state: "{{ item.value.state | default('present') }}"
+    info: "{{ item.value.info | default(omit) }}"
+    location: "{{ item.value.location | default(omit) }}"
+    uri: "{{ item.value.uri }}"
+    model: "{{ item.value.model | default(omit) }}"
+    enabled: "{{ item.value.enabled | default(true) }}"
+    default: "{{ item.value.default_printer | default(omit) }}"
+    report_ipp_supply_levels: >-
+      {{
+        item.value.report_ipp_supply_levels |
+        default(true)
+      }}
+    report_snmp_supply_levels: >-
+      {{
+        item.value.report_snmp_supply_levels |
+        default(true)
+      }}
+    shared: "{{ item.value.shared | default(true) }}"
+    assign_cups_policy: >-
+      {{
+        item.value.assign_cups_policy |
+        default('default')
+      }}
+    job_kb_limit: "{{ item.value.job_kb_limit | default(omit) }}"
+    job_quota_limit: "{{ item.value.job_quota_limit | default(omit) }}"
+    job_page_limit: "{{ item.value.job_page_limit | default(omit) }}"
+    options: "{{ item.value.options | default(omit) }}"
+  loop: >-
+    {{
+      cups_printers |
+      ansible.builtin.dict2items
+    }}

@@ -1,0 +1,10 @@
+- name: Restart airsaned service
+  when: airsaned_started is not changed
+  ansible.builtin.systemd_service:
+    name: airsaned
+    state: restarted
+
+- name: Restart scanservjs service
+  ansible.builtin.systemd_service:
+    name: scanservjs
+    state: restarted
