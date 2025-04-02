@@ -50,7 +50,7 @@
 - name: Set scanner location
   ansible.builtin.lineinfile:
     path: /etc/airsane/options.conf
-    regexp: ^#location\b
+    regexp: ^#?location\b
     line: "location {{ scanner_location }}"
   notify: Restart airsaned service
 
